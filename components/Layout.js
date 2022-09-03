@@ -7,10 +7,12 @@ import Navbar from "./Navbar"
 export default function Layout({ children }) {
     return (
         <Center>
-        <Box w="70%">
-        <Navbar/>
-            {children}
-            </Box>
+        <Box minW={"50%"}>
+            <Navbar />
+            <Center>
+                    {children}
+            </Center>    
+        </Box>
         </Center>
     )
 }

@@ -15,7 +15,7 @@ export default function Navbar() {
     
     return (
         <>
-        <Box>
+        
             <Breadcrumb textAlign={"center"} fontSize="1.5em" p="2" spacing="10" borderRadius={"sm"}>
                 <BreadcrumbItem>
                     <NextLink href='/' passHref>
@@ -34,13 +34,14 @@ export default function Navbar() {
                         <BreadcrumbLink>upload</BreadcrumbLink>
                     </NextLink>
                     </BreadcrumbItem>
-
-                <BreadcrumbItem>
-                        <IconButton onClick={toggleColorMode} aria-label='Dark/Light switch' icon={<SunIcon/>}/>
-                </BreadcrumbItem>
-                </Breadcrumb>
-            
-            </Box>
+            </Breadcrumb>
+            <Divider borderColor="white" />
         </>
     )
 }
+
+/*
+                <BreadcrumbItem>
+                        <IconButton onClick={toggleColorMode} aria-label='Dark/Light switch' icon={<SunIcon/>}/>
+                </BreadcrumbItem>
+*/
