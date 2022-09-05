@@ -14,8 +14,7 @@ export default function Navbar() {
     const { colorMode, toggleColorMode } = useColorMode()
     
     return (
-        <>
-        
+        <>        
             <Breadcrumb textAlign={"center"} fontSize="1.5em" p="2" spacing="10" borderRadius={"sm"}>
                 <BreadcrumbItem>
                     <NextLink href='/' passHref>

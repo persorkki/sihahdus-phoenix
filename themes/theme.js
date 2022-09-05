@@ -8,8 +8,9 @@ const config = {
 const styles = {
     global: (props) => ({
       'body': {
-        bg: props.colorMode === 'dark' ? 'blue.900' : 'blue.50',
+        bg: props.colorMode === 'dark' ? 'gray.800' : 'blue.50',
         color: props.colorMode === 'dark' ? 'blue.50' : 'blue.900',
+        overflow: 'scroll'
       },
     })
 }

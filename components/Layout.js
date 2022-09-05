@@ -3,15 +3,18 @@ import {
     Center,
 } from "@chakra-ui/react"
 import Navbar from "./Navbar"
+import Footer from "./Footer"
 
 export default function Layout({ children }) {
     return (
         <Center>
-        <Box minW={"50%"}>
+        <Box>
             <Navbar />
-            <Center>
+            
                     {children}
-            </Center>    
+            
+          
+            
         </Box>
         </Center>
     )
