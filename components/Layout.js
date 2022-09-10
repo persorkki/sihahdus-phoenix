@@ -10,11 +10,7 @@ export default function Layout({ children }) {
         <Center>
         <Box>
             <Navbar />
-            
-                    {children}
-            
-          
-            
+                {children}
         </Box>
         </Center>
     )

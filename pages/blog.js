@@ -18,43 +18,12 @@ import {
 
 export default function Blog() {
     const MB_SIZE = 4;
-    return (
-        
-        <Grid templateColumns={'repeat(7,1fr)'} gap={"4"} alignItems="center" marginTop={MB_SIZE}>
+    return (        
+        <Grid templateColumns={'repeat(7,200px)'}  gap={"4"} alignItems="center" marginTop={MB_SIZE}>
         <GridItem colStart={"3"} colSpan={"3"}>
-            <FormControl>
-                <GridItem align="center">
-                    <StatusText text="staattinen" color="red.500" MB_SIZE={MB_SIZE}/>
-                    </GridItem>
-                    <GridItem align={"center"}>
-                        <Text
-                            bg={"gray.900"}
-                            _hover={{ bg: "gray.700" }}
-                            mb={MB_SIZE}>
-                            http://localhost:3000/3x - Copy (17).gif
-                            </Text>
-                    </GridItem>
-                    <GridItem>
-                        <Text
-                            my="4"
-                            p="10"
-                            align={"center"}
-                            htmlFor="fileInput"
-                            border={"2px dashed"}
-                        >longassuploadtexxttxtxxtxtxttxxttxxtttxxtxtxttxtxxtasdasdadasdasdijasidjsdasdasdsadasd
-                            </Text>
-                    </GridItem>
-                    <Input
-                        id="fileInput"
-                        type="file"
-                        hidden>
-                    </Input>      
-                <Button w="100%" mb={MB_SIZE}>Upload</Button>
-                <Image src="/r.png"></Image>
-                </FormControl>
+
         </GridItem>
-            </Grid>
-        
+        </Grid>
     )
 }
 

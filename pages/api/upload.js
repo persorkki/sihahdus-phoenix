@@ -39,8 +39,8 @@ export default async function handler(req, res) {
             })
         }
         else {
-            console.log("400");
-            return res.status(400).json({
+            console.log("409");
+            return res.status(409).json({
                 fileURI: PUBLIC_FILE_LOCATION + fileInfo.fileName
             })
         }

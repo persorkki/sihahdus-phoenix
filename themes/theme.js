@@ -2,12 +2,12 @@ import { extendTheme } from "@chakra-ui/react";
 import { mode } from "@chakra-ui/theme-tools";
 
 const config = {
-    initialColorMode: 'light',
+    initialColorMode: 'dark',
     useSystemColorMode: false,
 }
 const styles = {
     global: (props) => ({
-      'body': {
+    'body': {
         bg: props.colorMode === 'dark' ? 'gray.800' : 'blue.50',
         color: props.colorMode === 'dark' ? 'blue.50' : 'blue.900',
         overflow: 'scroll'

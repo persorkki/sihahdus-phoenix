@@ -8,19 +8,27 @@ import {
     Button,
     Spinner,
     Image,
-    Container,
-    Box
+    Grid,
+    GridItem,
+    Text,
+    Link
 } from '@chakra-ui/react'
-
+import {
+    CopyIcon
+} from '@chakra-ui/icons'
 import axios from 'axios'
-import { calcLength } from 'framer-motion';
 import { useEffect, useState } from 'react'
+import { useSession, signIn, signOut } from "next-auth/react"
 
 export default function Upload() {
     const status = {
         DEFAULT: {
             text: "Ready to receive files",
             color: "green.300"
+        },
+        COPY_TO_CLIPBOARD: {
+            text: "URL copied to clipboard!",
+            color: "blue.300"
         },
 
         //file handling
@@ -38,6 +46,10 @@ export default function Upload() {
         },
 
         //errors
+        FILE_ALREADY_EXISTS: {
+            text: "File already exists on server",
+            color: "red.300"
+        },
         FILE_UPLOAD_FAILED: {
             text: "Upload failed!",
             color: "red.300"
@@ -46,6 +58,7 @@ export default function Upload() {
             text: "File size exceeded!",
             color: "red.300"
         },
+
     };
 
     const defaultUploadText = "drag files here or click to upload";
@@ -56,12 +69,14 @@ export default function Upload() {
     const [buttonFlag, setButtonFlag] = useState(false)
     const [loading, setLoading] = useState(false)
     const [drag, setDrag] = useState(false)
+    const { data: session } = useSession()
 
     const copyToClipboard = (text) => {
         navigator.clipboard.writeText(text);
-        //setCopiedText("Copied to clipboard!");
+        const tempText = statusText
+        setStatusText(status.COPY_TO_CLIPBOARD)
         setTimeout(() => {
-            //setCopiedText(null);
+            setStatusText(tempText)
         }, 1000);
     }
 
@@ -91,11 +106,16 @@ export default function Upload() {
                 setLoading(false)
             })
             .catch((err) => {
+                console.log(err);
                 console.log(err.toJSON().status);
                 switch (err.toJSON().status)
                 {
                     case 413:
                         setStatusText(status.FILE_SIZE_EXCEEDED)
+                        break;
+                    case 409:
+                        setStatusText(status.FILE_ALREADY_EXISTS)
+                        setFileURI(err.response.data.fileURI)
                         break;
                     default:
                         setStatusText(status.FILE_UPLOAD_FAILED)
@@ -121,10 +141,11 @@ export default function Upload() {
     const uploadChange = (e) => {
         e.stopPropagation()
         e.preventDefault()
-        //e.preventDefault();
+
         let fileObject = {}
+
         //this function is used click and drag events
-        //they have their file data objects in different locations
+        //they have their file data objects in different locations in the response
         if (e.type === "change" && e.target.files[0])
             fileObject = e.target.files[0]
         else if (e.type === "drop" && e.dataTransfer.files[0])
@@ -137,73 +158,91 @@ export default function Upload() {
             ? fileObject.name.slice(0, 45) + "..."
             : fileObject.name)
     }
-
-    //miksi FormLabelilla oli mr>0??
-    return (
-        <>
-        <Flex justifyContent={"center"} m="5" minW="50%" maxW="50%" >
-            <FormControl onSubmit={(e) => e.preventDefault()} >
-                <Center>
-                    <FormLabel>
-                        Status
-                    </FormLabel>
-                    <FormLabel color={statusText.color}>
-                        {statusText.text}
-                    </FormLabel>
-                </Center>
-                <Center>
-                        {fileURI &&
-                            <FormLabel
-                                onClick={() => { copyToClipboard(fileURI) }}
-                                _hover={{ color: "gray.500"}}
-                                >
-                                {fileURI}
-                            </FormLabel>
-                        }
-                </Center>
-                <FormLabel
-                        textAlign={"center"}
-                        htmlFor="fileInput"
-                        _hover={{ color: "gray.500" }}
-                        
-                        border={"2px dashed"}
-                        p="10em"
-                        mr="0"
-                        my="5"
-                        sx={drag ? {
-                            "box-shadow": "0 0 0 10000px rgba(0,0,0,.5);",
-                            "z-index": "999;"}
-                            : { "z-index": "0" }}
-                        
-                        onDragOver={(e) => {
-                            e.stopPropagation()
-                            e.preventDefault()
-                            setDrag(true)
-                        }}
-                        onDragLeave={(e) => {
-                            e.stopPropagation()
-                            e.preventDefault()
-                            setDrag(false)
-                            
-                        }}
-                        onDrop={(e) => {
-                            uploadChange(e)
-                            setDrag(false)
-                        }}>
-                    { loading ? <Spinner /> :  uploadText}
+    const MB_SIZE = 4;
+    
+    if (!session) {
+        return (
+            <Grid templateColumns={'repeat(7,200px)'}  gap={"4"} alignItems="center" marginTop={MB_SIZE}>
+            
+                <GridItem colStart={"4"} colSpan={"1"} textAlign={"center"}>
                     
-                    </FormLabel>
-                    <Input
-                        id="fileInput"
-                        onChange={uploadChange}
-                        type="file"
-                        hidden>
-                    </Input>      
-                <Button disabled={!buttonFlag} w="100%" onClick={uploadFile} mb="5">Upload</Button>
-                {fileURI && <Preview url={fileURI}></Preview>}
+                    <Text >Access denied</Text>
+                    <Button mt="5" w="100%"onClick={() => signIn()}>Log in</Button>
+                </GridItem>
+            
+            </Grid>
+        )
+    }
+
+    return (
+        <Grid templateColumns={'repeat(7,200px)'} gap={"4"} alignItems="center" marginTop={MB_SIZE}
+        // these events prevent the default browser action which would open a file
+        // in the browser if the file wasn't dropped into our intended dropzone
+        onDragOver={(e) => { e.preventDefault() }}
+        onDrop={(e) => { e.preventDefault() }} >
+            <GridItem colStart={"3"} colSpan={"3"}>
+                <FormControl>
+                    <GridItem align={"center"}>
+                        <StatusText
+                            text={statusText.text}
+                            color={statusText.color}
+                            MB_SIZE={MB_SIZE} />
+                    </GridItem>
+
+                    <GridItem>
+                        <FormLabel
+                            textAlign={"center"}
+                            my="4"
+                            mr="0"
+                            p="10"
+                            align="center"
+                            htmlFor="fileInput"
+                                border={"2px dashed"}
+                                _hover={{ color: "gray.500"}}
+                            sx={drag ? {
+                                "box-shadow": "0 0 0 10000px rgba(0,0,0,.5);",
+                                "z-index": "999;"}
+                                : { "z-index": "0" }}
+                            
+                            onDragOver={(e) => {
+                                e.stopPropagation()
+                                e.preventDefault()
+                                setDrag(true)
+                            }}
+                            onDragLeave={(e) => {
+                                e.stopPropagation()
+                                e.preventDefault()
+                                setDrag(false)
+                                
+                            }}
+                            onDrop={(e) => {
+                                e.preventDefault()
+                                e.stopPropagation()
+                                uploadChange(e)
+                                setDrag(false)
+                            }}>
+                            { loading ? <Spinner /> :  uploadText}
+                        </FormLabel>
+                    </GridItem>
+                    
+                    <GridItem>
+                        <Input
+                            id="fileInput"
+                            onChange={uploadChange}
+                            type="file"
+                            hidden>
+                        </Input>  
+                    </GridItem>    
+
+                    <GridItem>
+                        <Button disabled={!buttonFlag} w="100%" onClick={uploadFile} mb="5">Upload</Button>
+                    </GridItem>
+
+                    {fileURI && <PreviewBox fileURI={fileURI} copyToClipboard={copyToClipboard} MB_SIZE={MB_SIZE} />}
+                    
                 </FormControl>
-            </Flex>
-        </>
+                </GridItem>
+        </Grid>
     )
 }
 
@@ -211,23 +250,42 @@ export function Preview(props) {
     return (
         <>
             <Image
-                
                 src={props.url}
                 alt="preview"
-                _hover={{ color:"gray.500"}}
-                border="2px dashed"
-                p="2px"
-                
-                
-                
-                
+                bg={"gray.900"}
+                _hover={{bg:"gray.500"}}
+                p="6px"
+                minW="50%"
                 maxH={"50%"}
                 margin={"auto"}
-                
-                p="2"/>
+                />
             
         </>
     )
 }
 
+export function StatusText({text, color, MB_SIZE}) {
+    return (
+        <Text mb={MB_SIZE}>
+            <Text as="span" color={color} fontWeight={"bold"}>{text}</Text>
+        </Text>
+    )
+}
+
+export function PreviewBox({fileURI, copyToClipboard, MB_SIZE="4"}) {
+    return (
+        <GridItem
+            onClick={() => {copyToClipboard(fileURI)}} colStart={"3"}>
+            <Text
+                bg={"gray.900"}
+                _hover={{ bg: "gray.700", cursor: "copy" }}
+                mb={MB_SIZE}
+                textAlign={"center"}
+                >
+                {fileURI}
+            </Text>
+            <Preview url={fileURI}></Preview>
+        </GridItem>
+    )
+}
 //<Image src={props.url} alt="preview" style={{ "border": "1px dotted", "padding" : "0.5em"}}/>
