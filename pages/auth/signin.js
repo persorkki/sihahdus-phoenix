@@ -25,8 +25,8 @@ export default function SignIn({ csrfToken }) {
       <GridItem colStart={"4"} colSpan={"1"}>
               <form method="post" action="/api/auth/callback/credentials"
                   onSubmit={(e) => {
-                      
-                      signIn('credentials', {password: inputValue, callbackUrl:`${window.location.origin}/`})
+                      e.preventDefault()
+                      signIn('credentials', {password: inputValue, callbackUrl:`${window.location.origin}/upload`})
                   }}>
                   
           <Input name="csrfToken" type="hidden" defaultValue={csrfToken} />
