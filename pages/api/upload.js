@@ -1,12 +1,11 @@
 import { IncomingForm } from "formidable"
-import fs, { stat } from "fs"
-//import mv from "mv"
+import fs from "fs"
 import path from "path"
 
 export const config = {
     api: {
       bodyParser: false,
-      responseLimit: '300mb',
+        responseLimit: '300mb',
     }
 };
 
@@ -16,7 +15,10 @@ const MAXIMUM_FILE_SIZE_MB = 5
 const sleep = (ms) => new Promise(resolve => setTimeout(resolve, ms));
 
 export default async function handler(req, res) {
-    await sleep(1000)
+
+    //simulating a delay for development to see if spinner etc works
+    //await sleep(1000)
+
     const form = new IncomingForm({ maxFileSize: 1024 * 1024 * MAXIMUM_FILE_SIZE_MB})
     
     form.parse(req, (err, fields, file) => {
