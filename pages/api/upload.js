@@ -10,7 +10,7 @@ export const config = {
 };
 
 const PUBLIC_FILE_LOCATION = process.env.PUBLIC_FILE_LOCATION
-const MAXIMUM_FILE_SIZE_MB = 5
+const MAXIMUM_FILE_SIZE_MB = 300
 
 const sleep = (ms) => new Promise(resolve => setTimeout(resolve, ms));
 
