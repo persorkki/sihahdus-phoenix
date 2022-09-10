@@ -7,7 +7,8 @@ export default NextAuth({
   },
   providers: [
     Credentials({
-        name: "Cred",
+        id: "credentials",
+        name: "credentials",
         credentials: {
             password: { label: "Keyword", type: "text", placeholder: "super secret keyword" }
         },
