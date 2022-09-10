@@ -41,7 +41,7 @@ export default async function handler(req, res) {
             })
         }
         else {
-            console.log("409");
+            console.log(`successful upload @ ${PUBLIC_FILE_LOCATION + fileInfo.fileName}`);
             return res.status(409).json({
                 fileURI: PUBLIC_FILE_LOCATION + fileInfo.fileName
             })
