@@ -13,7 +13,7 @@ export default NextAuth({
             password: { label: "Keyword", type: "text", placeholder: "super secret keyword" }
         },
         async authorize(credentials, req) {
-          if (credentials.password === "sihahdus")
+          if (credentials.password === process.env.KEYWORD)
             return {
                 id: 1,
                 username : "sihahtaja"

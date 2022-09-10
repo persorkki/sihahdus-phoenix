@@ -93,20 +93,13 @@ export default function Upload() {
         axios.put("/api/upload", formData, headers)
             .then((res) => {
                 if (res.status == 200) {
-                    //console.log(res);
                     setFileURI(res.data.fileURI)
                     setStatusText(status.FILE_UPLOAD_SUCCESS)
                 }
-                /*
-                else { 
-                    setStatusText(status.FILE_UPLOAD_FAILED)
-                    throw new Error("connection to upload API failed", { cause: res })
-                }
-                */
+
                 setLoading(false)
             })
             .catch((err) => {
-                console.log(err);
                 console.log(err.toJSON().status);
                 switch (err.toJSON().status)
                 {
